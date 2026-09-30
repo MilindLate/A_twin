@@ -550,7 +550,7 @@ function TapasUAVModel({
         )}
       </group>
 
-      {/* T-TAIL EMPENNAGE */}
+      {/* T-TAIL EMPENNAGE & NAVIGATION STROBES */}
       <group position={[0, 0.2, -3.7]}>
         <mesh position={[0, 1.25, 0]} rotation={[0.22, 0, 0]} castShadow>
           <boxGeometry args={[0.16, 2.5, 1.1]} />
@@ -572,7 +572,31 @@ function TapasUAVModel({
           <boxGeometry args={[0.45, 0.13, 0.85]} />
           <meshStandardMaterial color="#f97316" />
         </mesh>
+        {/* Tail White Strobe Beacon */}
+        <mesh position={[0, 2.68, -0.75]}>
+          <sphereGeometry args={[0.1, 10, 10]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
       </group>
+
+      {/* WINGTIP NAVIGATION LIGHTS (PORT RED / STARBOARD GREEN) & DORSAL BEACON */}
+      <mesh position={[-11.55, 0.95, 0.1]}>
+        <sphereGeometry args={[0.12, 10, 10]} />
+        <meshBasicMaterial color="#ef4444" />
+      </mesh>
+      <mesh position={[11.55, 0.95, 0.1]}>
+        <sphereGeometry args={[0.12, 10, 10]} />
+        <meshBasicMaterial color="#10b981" />
+      </mesh>
+      <mesh position={[0, 0.82, -0.8]}>
+        <sphereGeometry args={[0.11, 10, 10]} />
+        <meshBasicMaterial color="#ef4444" />
+      </mesh>
+      {/* Dorsal C-Band Line-of-Sight Telemetry Blade Antenna */}
+      <mesh position={[0, 0.92, -1.6]} rotation={[-0.25, 0, 0]}>
+        <boxGeometry args={[0.05, 0.48, 0.28]} />
+        <meshStandardMaterial color="#f97316" roughness={0.3} />
+      </mesh>
 
       {/* CLICKABLE RETRACTABLE LANDING GEAR */}
       <group

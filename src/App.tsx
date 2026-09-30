@@ -16,10 +16,12 @@ import {
   FileText,
   Cpu,
   Compass,
-  RotateCcw
+  RotateCcw,
+  Wrench
 } from 'lucide-react';
 import clsx from 'clsx';
 import { Engine3D } from './components/Engine3D';
+import { EngineCore3D } from './components/EngineCore3D';
 import { Engine2D } from './components/Engine2D';
 import { Diagnostics } from './components/Diagnostics';
 
@@ -73,7 +75,7 @@ export default function App() {
     []
   );
   const [activeTab, setActiveTab] = useState<
-    '3d' | '2d' | 'overview' | 'diagnostics'
+    '3d' | 'engine_core' | '2d' | 'overview' | 'diagnostics'
   >('3d');
 
   useEffect(() => {
@@ -160,6 +162,12 @@ export default function App() {
             label="3D Flight & Drone Twin"
           />
           <NavTab
+            active={activeTab === 'engine_core'}
+            onClick={() => setActiveTab('engine_core')}
+            icon={<Wrench className="w-4 h-4" />}
+            label="3D Engine CAD Lab"
+          />
+          <NavTab
             active={activeTab === '2d'}
             onClick={() => setActiveTab('2d')}
             icon={<Cpu className="w-4 h-4" />}
@@ -238,6 +246,9 @@ export default function App() {
       <main className="flex-1 p-3 overflow-y-auto">
         {activeTab === '3d' && (
           <Engine3D telemetry={telemetry} dtState={dtState} />
+        )}
+        {activeTab === 'engine_core' && (
+          <EngineCore3D telemetry={telemetry} dtState={dtState} />
         )}
         {activeTab === '2d' && (
           <Engine2D telemetry={telemetry} dtState={dtState} />
