@@ -1,0 +1,8 @@
+{
+  "name": "Aero-Piston Engine Digital Twin",
+  "description": "Real-time Digital Twin for MALE UAV aero-piston engines featuring simulation, telemetry visualization, fault detection, and RUL estimation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
