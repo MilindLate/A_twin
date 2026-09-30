@@ -140,7 +140,7 @@ export default function App() {
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 animate-pulse text-emerald-400" />
             <p className="text-sm font-mono tracking-wider uppercase text-slate-400">
-              Synchronizing TAPAS-BH-201 Propulsion Digital Twin...
+              Synchronizing DRDO Propulsion Digital Twin...
             </p>
           </div>
         </div>
@@ -152,13 +152,9 @@ export default function App() {
     <div className="h-screen bg-[#07090E] text-slate-200 font-sans flex flex-col overflow-hidden">
       {/* PROFESSIONAL 3-ZONE TOP COMMAND HEADER */}
       <header className="flex items-center justify-between bg-[#0B0F17] px-4 py-2 border-b border-slate-800/90 shrink-0 gap-2">
-        {/* Zone 1: Official DRDO Emblem & Brand Title */}
-        <div className="flex items-center gap-3">
+        {/* Zone 1: Official DRDO Emblem & Name Only DRDO */}
+        <div className="flex items-center gap-2.5">
           <DrdoLogo size="md" showText={true} />
-          <div className="h-6 w-px bg-slate-800 hidden xl:block" />
-          <span className="hidden xl:inline-block text-xs font-mono font-bold tracking-tight text-emerald-400 whitespace-nowrap">
-            TAPAS-BH-201 GCS
-          </span>
         </div>
 
         {/* Zone 2: Primary View Navigation */}
@@ -487,7 +483,7 @@ function OverviewView({
         <div className="bg-[#0D121C] border border-slate-800 rounded-lg p-4 flex flex-col gap-3 shrink-0">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <DrdoLogo size="sm" showText={false} />
+              <DrdoLogo size="sm" showText={true} className="pr-2 border-r border-slate-800" />
               <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                 <Compass className="w-5 h-5" />
               </div>
@@ -496,7 +492,7 @@ function OverviewView({
                   htmlFor="mission-profile-select"
                   className="block text-xs font-medium text-slate-300 uppercase tracking-widest"
                 >
-                  DRDO · ADE Mission Control & Environmental Scenario
+                  DRDO Mission Control & Environmental Scenario
                 </label>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {activeProfileObj.summary}

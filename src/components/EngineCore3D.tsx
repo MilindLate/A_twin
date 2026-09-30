@@ -1235,15 +1235,7 @@ export function EngineCore3D({
         {/* Left: Engine Spec Title & Subsystem Selector Pills */}
         <div className="flex flex-wrap items-center gap-1.5">
           <div className="flex items-center gap-2.5 mr-2 pr-3 border-r border-slate-800">
-            <DrdoLogo size="sm" showText={false} />
-            <div>
-              <div className="text-xs font-bold text-white tracking-wide">
-                DRDO · ROTAX 914 UL/F 3D CAD CORE LAB
-              </div>
-              <div className="text-[10px] font-mono text-slate-400">
-                1,211 cc Flat-4 Turbo · 1-3-2-4 Firing Order
-              </div>
-            </div>
+            <DrdoLogo size="sm" showText={true} />
           </div>
 
           {(

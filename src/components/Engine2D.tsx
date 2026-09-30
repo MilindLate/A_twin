@@ -154,8 +154,8 @@ export function Engine2D({ telemetry, dtState }: Engine2DProps) {
       {/* TOP 2D CONTROL & INSTRUMENTATION BAR */}
       <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-wrap items-center justify-between gap-4">
         {/* View Mode Selector */}
-        <div className="flex items-center gap-2">
-          <DrdoLogo size="sm" showText={false} />
+        <div className="flex items-center gap-2.5">
+          <DrdoLogo size="sm" showText={true} className="pr-2 border-r border-slate-800" />
           <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-md border border-slate-800">
             <button
               onClick={() => setViewMode('flat4')}
