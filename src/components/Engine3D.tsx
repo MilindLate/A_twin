@@ -22,6 +22,7 @@ import {
   Layers
 } from 'lucide-react';
 import clsx from 'clsx';
+import { DrdoLogo } from './DrdoLogo';
 
 type CameraMode = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 type FlightMode = 'waypoints' | 'orbit' | 'cockpit' | 'manual';
@@ -2194,6 +2195,7 @@ export function Engine3D({
       <div className="absolute top-2.5 inset-x-3 z-20 flex flex-col items-center gap-1.5 pointer-events-auto">
         {/* Row 1: Camera & View Mode Controls */}
         <div className="flex flex-wrap items-center gap-1 bg-[#090e17]/90 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-700/80 text-[11px] shadow-lg">
+          <DrdoLogo size="sm" showText={false} className="mr-1" />
           <TopBarBtn
             active={flightMode === 'cockpit'}
             onClick={() => setFlightMode('cockpit')}

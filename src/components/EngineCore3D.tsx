@@ -21,6 +21,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { DrdoLogo } from './DrdoLogo';
 
 export type ShellRenderMode = 'cutaway' | 'solid' | 'thermal' | 'wireframe';
 export type SubsystemId =
@@ -1233,11 +1234,11 @@ export function EngineCore3D({
       <div className="bg-[#0B0F17] border border-slate-800 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
         {/* Left: Engine Spec Title & Subsystem Selector Pills */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <div className="flex items-center gap-2 mr-2 pr-3 border-r border-slate-800">
-            <Wrench className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2.5 mr-2 pr-3 border-r border-slate-800">
+            <DrdoLogo size="sm" showText={false} />
             <div>
               <div className="text-xs font-bold text-white tracking-wide">
-                ROTAX 914 UL/F · 3D CAD CORE LAB
+                DRDO · ROTAX 914 UL/F 3D CAD CORE LAB
               </div>
               <div className="text-[10px] font-mono text-slate-400">
                 1,211 cc Flat-4 Turbo · 1-3-2-4 Firing Order

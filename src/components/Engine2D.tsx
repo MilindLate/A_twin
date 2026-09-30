@@ -16,6 +16,7 @@ import {
   Maximize2
 } from 'lucide-react';
 import clsx from 'clsx';
+import { DrdoLogo } from './DrdoLogo';
 
 interface Engine2DProps {
   telemetry: EngineTelemetry;
@@ -153,9 +154,11 @@ export function Engine2D({ telemetry, dtState }: Engine2DProps) {
       {/* TOP 2D CONTROL & INSTRUMENTATION BAR */}
       <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-wrap items-center justify-between gap-4">
         {/* View Mode Selector */}
-        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-md border border-slate-800">
-          <button
-            onClick={() => setViewMode('flat4')}
+        <div className="flex items-center gap-2">
+          <DrdoLogo size="sm" showText={false} />
+          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-md border border-slate-800">
+            <button
+              onClick={() => setViewMode('flat4')}
             className={clsx(
               'px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap',
               viewMode === 'flat4'
@@ -187,6 +190,7 @@ export function Engine2D({ telemetry, dtState }: Engine2DProps) {
           >
             Subsystem P&ID Flow
           </button>
+          </div>
         </div>
 
         {/* Time-Dilation & Crank Angle Scrubber */}

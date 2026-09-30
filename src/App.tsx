@@ -26,6 +26,7 @@ import { EngineCore3D } from './components/EngineCore3D';
 import { Engine2D } from './components/Engine2D';
 import { Diagnostics } from './components/Diagnostics';
 import { MissionReplayAndArchitecture } from './components/MissionReplayAndArchitecture';
+import { DrdoLogo } from './components/DrdoLogo';
 
 const socket = io();
 
@@ -134,11 +135,14 @@ export default function App() {
   if (!telemetry || !dtState) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#07090E] text-slate-300">
-        <div className="flex flex-col items-center gap-3">
-          <Activity className="w-7 h-7 animate-pulse text-emerald-400" />
-          <p className="text-sm font-mono tracking-wider uppercase text-slate-400">
-            Synchronizing TAPAS-BH-201 Propulsion Digital Twin...
-          </p>
+        <div className="flex flex-col items-center gap-4">
+          <DrdoLogo size="lg" showText={true} />
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 animate-pulse text-emerald-400" />
+            <p className="text-sm font-mono tracking-wider uppercase text-slate-400">
+              Synchronizing TAPAS-BH-201 Propulsion Digital Twin...
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -147,14 +151,13 @@ export default function App() {
   return (
     <div className="h-screen bg-[#07090E] text-slate-200 font-sans flex flex-col overflow-hidden">
       {/* PROFESSIONAL 3-ZONE TOP COMMAND HEADER */}
-      <header className="flex items-center justify-between bg-[#0B0F17] px-4 py-2.5 border-b border-slate-800/90 shrink-0 gap-2">
-        {/* Zone 1: Brand Title */}
-        <div className="flex items-center gap-2.5">
-          <span className="text-sm font-bold tracking-tight text-white whitespace-nowrap">
+      <header className="flex items-center justify-between bg-[#0B0F17] px-4 py-2 border-b border-slate-800/90 shrink-0 gap-2">
+        {/* Zone 1: Official DRDO Emblem & Brand Title */}
+        <div className="flex items-center gap-3">
+          <DrdoLogo size="md" showText={true} />
+          <div className="h-6 w-px bg-slate-800 hidden xl:block" />
+          <span className="hidden xl:inline-block text-xs font-mono font-bold tracking-tight text-emerald-400 whitespace-nowrap">
             TAPAS-BH-201 GCS
-          </span>
-          <span className="hidden 2xl:inline-block px-2 py-0.5 text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded">
-            DRDO MALE UAV DT
           </span>
         </div>
 
@@ -484,6 +487,7 @@ function OverviewView({
         <div className="bg-[#0D121C] border border-slate-800 rounded-lg p-4 flex flex-col gap-3 shrink-0">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
+              <DrdoLogo size="sm" showText={false} />
               <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                 <Compass className="w-5 h-5" />
               </div>
@@ -492,7 +496,7 @@ function OverviewView({
                   htmlFor="mission-profile-select"
                   className="block text-xs font-medium text-slate-300 uppercase tracking-widest"
                 >
-                  Mission Control & Environmental Scenario
+                  DRDO · ADE Mission Control & Environmental Scenario
                 </label>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {activeProfileObj.summary}

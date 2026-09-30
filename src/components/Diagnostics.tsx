@@ -34,6 +34,7 @@ import {
   Radio,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { DrdoLogo } from './DrdoLogo';
 
 export function Diagnostics({
   telemetry,
@@ -328,10 +329,9 @@ export function Diagnostics({
       {/* TOP EXECUTIVE SUMMARY STRIP (AI/ML PROGNOSTICS & RELIABILITY)       */}
       {/* =================================================================== */}
       <div className="bg-[#0B0F17] border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <Brain className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <DrdoLogo size="md" showText={true} />
+          <div className="h-8 w-px bg-slate-800 hidden sm:block" />
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold text-white tracking-wide uppercase">
