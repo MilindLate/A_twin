@@ -245,7 +245,11 @@ export default function App() {
       {/* MAIN VIEWPORT STAGE */}
       <main className="flex-1 p-3 overflow-y-auto">
         {activeTab === '3d' && (
-          <Engine3D telemetry={telemetry} dtState={dtState} />
+          <Engine3D
+            telemetry={telemetry}
+            dtState={dtState}
+            onOpenEngineLab={() => setActiveTab('engine_core')}
+          />
         )}
         {activeTab === 'engine_core' && (
           <EngineCore3D telemetry={telemetry} dtState={dtState} />

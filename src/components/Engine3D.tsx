@@ -254,6 +254,7 @@ function TapasUAVModel({
   selectedEngine,
   show3dLabels,
   onSelectEngine,
+  onOpenEngineLab,
   onToggleFlir,
   onToggleGear,
 }: {
@@ -269,6 +270,7 @@ function TapasUAVModel({
   selectedEngine: 'port' | 'stbd';
   show3dLabels: boolean;
   onSelectEngine: (eng: 'port' | 'stbd') => void;
+  onOpenEngineLab?: () => void;
   onToggleFlir: () => void;
   onToggleGear: () => void;
 }) {
@@ -423,6 +425,11 @@ function TapasUAVModel({
           e.stopPropagation();
           onSelectEngine('port');
         }}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          onSelectEngine('port');
+          onOpenEngineLab?.();
+        }}
         onPointerOver={(e) => {
           e.stopPropagation();
           setHoveredPart('PORT ROTAX 914');
@@ -467,17 +474,32 @@ function TapasUAVModel({
 
         {show3dLabels && (
           <Html position={[0, 1.35, 0]} center distanceFactor={28}>
-            <button
-              onClick={() => onSelectEngine('port')}
-              className={clsx(
-                'px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap border transition-all shadow-lg',
-                selectedEngine === 'port'
-                  ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200 font-semibold'
-                  : 'bg-slate-950/80 border-slate-700 text-slate-300 hover:border-cyan-400'
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => onSelectEngine('port')}
+                className={clsx(
+                  'px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap border transition-all shadow-lg',
+                  selectedEngine === 'port'
+                    ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200 font-semibold'
+                    : 'bg-slate-950/80 border-slate-700 text-slate-300 hover:border-cyan-400'
+                )}
+              >
+                PORT ENG · {portThrottle}%
+              </button>
+              {onOpenEngineLab && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectEngine('port');
+                    onOpenEngineLab();
+                  }}
+                  className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg whitespace-nowrap"
+                  title="Open 3D Engine CAD Lab"
+                >
+                  3D CAD ↗
+                </button>
               )}
-            >
-              PORT ENG · {portThrottle}%
-            </button>
+            </div>
           </Html>
         )}
       </group>
@@ -490,6 +512,11 @@ function TapasUAVModel({
         onClick={(e) => {
           e.stopPropagation();
           onSelectEngine('stbd');
+        }}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          onSelectEngine('stbd');
+          onOpenEngineLab?.();
         }}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -535,17 +562,32 @@ function TapasUAVModel({
 
         {show3dLabels && (
           <Html position={[0, 1.35, 0]} center distanceFactor={28}>
-            <button
-              onClick={() => onSelectEngine('stbd')}
-              className={clsx(
-                'px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap border transition-all shadow-lg',
-                selectedEngine === 'stbd'
-                  ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200 font-semibold'
-                  : 'bg-slate-950/80 border-slate-700 text-slate-300 hover:border-cyan-400'
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => onSelectEngine('stbd')}
+                className={clsx(
+                  'px-2 py-0.5 rounded text-[10px] font-mono whitespace-nowrap border transition-all shadow-lg',
+                  selectedEngine === 'stbd'
+                    ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200 font-semibold'
+                    : 'bg-slate-950/80 border-slate-700 text-slate-300 hover:border-cyan-400'
+                )}
+              >
+                STBD ENG · {stbdThrottle}%
+              </button>
+              {onOpenEngineLab && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectEngine('stbd');
+                    onOpenEngineLab();
+                  }}
+                  className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg whitespace-nowrap"
+                  title="Open 3D Engine CAD Lab"
+                >
+                  3D CAD ↗
+                </button>
               )}
-            >
-              STBD ENG · {stbdThrottle}%
-            </button>
+            </div>
           </Html>
         )}
       </group>
@@ -1692,9 +1734,11 @@ function IsolatedPistonEngineBench({
 export function Engine3D({
   telemetry,
   dtState,
+  onOpenEngineLab,
 }: {
   telemetry: EngineTelemetry | null;
   dtState: (EngineHealthState & { active_alerts?: FaultAlert[] }) | null;
+  onOpenEngineLab?: () => void;
 }) {
   const uavRef = useRef<THREE.Group | null>(null);
   const orbitControlsRef = useRef<any>(null);
@@ -1759,7 +1803,9 @@ export function Engine3D({
         return;
       }
       const key = e.key.toLowerCase();
-      if (key >= '1' && key <= '7') {
+      if (key === '7' && onOpenEngineLab) {
+        onOpenEngineLab();
+      } else if (key >= '1' && key <= '7') {
         setCameraMode(Number(key) as CameraMode);
       } else if (key === 'g') {
         setGearDown((g) => !g);
@@ -2016,6 +2062,7 @@ export function Engine3D({
                 selectedEngine={selectedEngine}
                 show3dLabels={show3dLabels}
                 onSelectEngine={setSelectedEngine}
+                onOpenEngineLab={onOpenEngineLab}
                 onToggleFlir={() =>
                   setCameraMode((c) => (c === 6 ? 1 : 6))
                 }
@@ -2185,6 +2232,10 @@ export function Engine3D({
               key={cam.id}
               active={cameraMode === cam.id && flightMode !== 'cockpit'}
               onClick={() => {
+                if (cam.id === 7 && onOpenEngineLab) {
+                  onOpenEngineLab();
+                  return;
+                }
                 if (flightMode === 'cockpit') setFlightMode('waypoints');
                 setCameraMode(cam.id);
               }}
@@ -2487,14 +2538,24 @@ export function Engine3D({
             <div className="flex-1 bg-[#090e17]/92 backdrop-blur-md border border-slate-700/80 rounded-xl p-3.5 flex flex-col justify-between overflow-y-auto shadow-2xl">
               <div>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2.5">
-                  <span className="text-xs font-mono font-bold text-white tracking-wider">
-                    {selectedEngine === 'port'
-                      ? 'PORT ROTAX 914 UL/F'
-                      : 'STBD ROTAX 914 UL/F'}
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-400">
-                    18 CHANNELS · V5 MODEL
-                  </span>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-white tracking-wider block">
+                      {selectedEngine === 'port'
+                        ? 'PORT ROTAX 914 UL/F'
+                        : 'STBD ROTAX 914 UL/F'}
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-400">
+                      18 CHANNELS · V5 MODEL
+                    </span>
+                  </div>
+                  {onOpenEngineLab && (
+                    <button
+                      onClick={onOpenEngineLab}
+                      className="px-2.5 py-1 rounded-md bg-emerald-600/25 hover:bg-emerald-600/40 border border-emerald-500/60 text-emerald-300 text-[10px] font-mono font-semibold transition-colors"
+                    >
+                      Open 3D CAD Lab ↗
+                    </button>
+                  )}
                 </div>
 
                 <div className="space-y-1.5 text-[11px] font-mono">
