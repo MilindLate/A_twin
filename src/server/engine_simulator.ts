@@ -11,9 +11,12 @@ export class EngineSimulator {
   private faults = {
     misfire: 0,
     injector_degradation: 0,
+    cooling_degradation: 0,
     lubrication_failure: 0,
-    overheating: 0,
     sensor_drift: 0,
+    combustion_instability: 0,
+    overheating: 0,
+    abnormal_vibration: 0,
   };
 
   private state = {
@@ -148,6 +151,8 @@ export class EngineSimulator {
     let rpmDrop = 0;
     if (this.faults.misfire > 0) rpmDrop += 300 * this.faults.misfire;
     if (this.faults.injector_degradation > 0) rpmDrop += 100 * this.faults.injector_degradation;
+    if (this.faults.combustion_instability > 0)
+      rpmDrop += 140 * this.faults.combustion_instability * Math.sin(tSec * 5);
 
     const rpm = this.state.rpm - rpmDrop + noise(18);
     
@@ -156,17 +161,22 @@ export class EngineSimulator {
     if (this.faults.injector_degradation > 0) {
       fuelFlow -= 5.0 * this.faults.injector_degradation;
     }
+    if (this.faults.combustion_instability > 0) {
+      fuelFlow += 2.8 * this.faults.combustion_instability * Math.cos(tSec * 4);
+    }
     fuelFlow += noise(0.45);
 
     // EGT (approx 735 C baseline + mission profile offset)
     let egt = 735 + profileEgtOffset + noise(4.5);
     if (this.faults.misfire > 0) egt -= 80 * this.faults.misfire;
     if (this.faults.injector_degradation > 0) egt += 50 * this.faults.injector_degradation;
-    if (this.faults.sensor_drift > 0) egt += 100 * this.faults.sensor_drift;
+    if (this.faults.combustion_instability > 0) egt += 42 * this.faults.combustion_instability;
+    if (this.faults.sensor_drift > 0) egt += 95 * this.faults.sensor_drift;
 
     // CHT (approx 165 C baseline + mission thermal offset)
     let targetCht = 165 + profileChtOffset + (egt - (735 + profileEgtOffset)) * 0.12; 
     if (this.faults.overheating > 0) targetCht += 40 * this.faults.overheating;
+    if (this.faults.cooling_degradation > 0) targetCht += 32 * this.faults.cooling_degradation;
     this.state.cht += (targetCht - this.state.cht) * 0.03; // Thermal inertia
     const cht = this.state.cht + noise(0.8);
 
@@ -179,6 +189,7 @@ export class EngineSimulator {
     // Oil Temperature (approx 95 C + mission thermal offset)
     let targetOilTemp = 95 + profileOilTempOffset + (this.state.cht - 165) * 0.2;
     if (this.faults.lubrication_failure > 0) targetOilTemp += 30 * this.faults.lubrication_failure;
+    if (this.faults.cooling_degradation > 0) targetOilTemp += 18 * this.faults.cooling_degradation;
     this.state.oilTemp += (targetOilTemp - this.state.oilTemp) * 0.02;
     const oilTemp = this.state.oilTemp + noise(0.4);
 
@@ -186,9 +197,20 @@ export class EngineSimulator {
     let vibration = Math.max(5, 15 + profileVibOffset + noise(4));
     if (this.faults.misfire > 0) vibration += 50 * this.faults.misfire;
     if (this.faults.lubrication_failure > 0) vibration += 30 * this.faults.lubrication_failure;
+    if (this.faults.abnormal_vibration > 0) vibration += 45 * this.faults.abnormal_vibration;
+    if (this.faults.combustion_instability > 0) vibration += 28 * this.faults.combustion_instability;
 
     // Battery Voltage (alternator output varies slightly with RPM)
     const batteryVoltage = 28.2 + (rpm - 2450) * 0.0004 + noise(0.08);
+    const injectionTimingDeg =
+      15.1 -
+      (this.faults.combustion_instability > 0 ? 3.8 * this.faults.combustion_instability : 0) +
+      noise(0.15);
+    const manifoldPressureKpa = 101.3 * (0.55 + 0.65 * (this.state.throttle / 100)) + noise(0.8);
+    const sensorDriftDelta =
+      this.faults.sensor_drift > 0
+        ? 95 * this.faults.sensor_drift + noise(1.5)
+        : Math.abs(noise(0.9));
 
     return {
       timestamp: Date.now(),
@@ -204,7 +226,10 @@ export class EngineSimulator {
       throttle: this.state.throttle,
       altitude: Math.round(this.state.altitude),
       ambient_temp: Number(this.state.ambientTemp.toFixed(1)),
-      battery_voltage: batteryVoltage
+      battery_voltage: batteryVoltage,
+      injection_timing_deg: Number(injectionTimingDeg.toFixed(2)),
+      manifold_pressure_kpa: Number(manifoldPressureKpa.toFixed(1)),
+      sensor_drift_delta: Number(sensorDriftDelta.toFixed(1)),
     };
   }
 }

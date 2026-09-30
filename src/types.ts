@@ -20,6 +20,9 @@ export interface EngineTelemetry {
   altitude: number; // ft
   ambient_temp: number; // Celsius
   battery_voltage: number; // V
+  injection_timing_deg?: number; // deg BTDC
+  manifold_pressure_kpa?: number; // kPa
+  sensor_drift_delta?: number; // C divergence between Ch-A and Ch-B
 }
 
 export interface EngineHealthState {

@@ -131,12 +131,64 @@ export class DigitalTwin {
       this.alerts.push({
         id: "FLT-OVR",
         timestamp: ts,
-        parameter: "CHT",
+        parameter: "CHT/EGT",
         fault: "Overheating Trend",
         severity: "CAUTION",
         confidence: 0.78,
         probable_cause: "Prolonged high power or cooling airflow reduction",
         recommended_action: "Reduce throttle, increase airspeed if possible"
+      });
+    }
+
+    if (this.residuals.cht > 14 && Math.abs(this.residuals.egt) < 25) {
+      this.alerts.push({
+        id: "FLT-CLG",
+        timestamp: ts,
+        parameter: "CHT/Coolant",
+        fault: "Cooling Fin / Radiator Degradation",
+        severity: "WARNING",
+        confidence: 0.87,
+        probable_cause: "Cowl flap obstruction, radiator fin fouling, or coolant loss",
+        recommended_action: "Open cowl flaps 100% and inspect heat exchanger matrix"
+      });
+    }
+
+    if ((telemetry.sensor_drift_delta || 0) > 25 || (this.residuals.egt > 45 && Math.abs(this.residuals.cht) < 12 && Math.abs(this.residuals.fuel) < 1.8)) {
+      this.alerts.push({
+        id: "FLT-SNS",
+        timestamp: ts,
+        parameter: "EGT Ch-A / Ch-B",
+        fault: "Thermocouple Sensor Drift / Failure",
+        severity: "ADVISORY",
+        confidence: 0.94,
+        probable_cause: "K-Type EGT probe bias divergence between FADEC Lane A & B (Kalman isolated)",
+        recommended_action: "FADEC auto-switched to Kalman virtual sensor; replace EGT probe post-flight"
+      });
+    }
+
+    if (this.residuals.vibration > 18 && Math.abs(this.residuals.egt) < 35 && this.residuals.oil_pressure > -0.6) {
+      this.alerts.push({
+        id: "FLT-VIB",
+        timestamp: ts,
+        parameter: "Vibration RMS",
+        fault: "Abnormal Torsional / Bearing Vibration",
+        severity: "WARNING",
+        confidence: 0.88,
+        probable_cause: "PSRU reduction gearbox bearing wear or propeller blade mass imbalance",
+        recommended_action: "Limit engine speed below 2,350 RPM and inspect PSRU damper"
+      });
+    }
+
+    if ((telemetry.injection_timing_deg || 15.1) < 13.5 && this.residuals.vibration > 10) {
+      this.alerts.push({
+        id: "FLT-CMB",
+        timestamp: ts,
+        parameter: "Ignition Timing / Knock",
+        fault: "Combustion Instability & Detonation",
+        severity: "WARNING",
+        confidence: 0.91,
+        probable_cause: "Auto-ignition knock detected; FADEC retarding spark advance by 3.5°",
+        recommended_action: "Enrich fuel mixture (Lambda < 0.96) and reduce boost manifold pressure"
       });
     }
 

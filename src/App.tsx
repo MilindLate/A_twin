@@ -17,13 +17,15 @@ import {
   Cpu,
   Compass,
   RotateCcw,
-  Wrench
+  Wrench,
+  History
 } from 'lucide-react';
 import clsx from 'clsx';
 import { Engine3D } from './components/Engine3D';
 import { EngineCore3D } from './components/EngineCore3D';
 import { Engine2D } from './components/Engine2D';
 import { Diagnostics } from './components/Diagnostics';
+import { MissionReplayAndArchitecture } from './components/MissionReplayAndArchitecture';
 
 const socket = io();
 
@@ -75,7 +77,7 @@ export default function App() {
     []
   );
   const [activeTab, setActiveTab] = useState<
-    '3d' | 'engine_core' | '2d' | 'overview' | 'diagnostics'
+    '3d' | 'engine_core' | '2d' | 'overview' | 'diagnostics' | 'replay_arch'
   >('3d');
 
   useEffect(() => {
@@ -145,16 +147,19 @@ export default function App() {
   return (
     <div className="h-screen bg-[#07090E] text-slate-200 font-sans flex flex-col overflow-hidden">
       {/* PROFESSIONAL 3-ZONE TOP COMMAND HEADER */}
-      <header className="flex items-center justify-between bg-[#0B0F17] px-5 py-2.5 border-b border-slate-800/90 shrink-0">
+      <header className="flex items-center justify-between bg-[#0B0F17] px-4 py-2.5 border-b border-slate-800/90 shrink-0 gap-2">
         {/* Zone 1: Brand Title */}
-        <div className="flex items-center gap-3">
-          <span className="text-base font-bold tracking-tight text-white whitespace-nowrap">
+        <div className="flex items-center gap-2.5">
+          <span className="text-sm font-bold tracking-tight text-white whitespace-nowrap">
             TAPAS-BH-201 GCS
+          </span>
+          <span className="hidden 2xl:inline-block px-2 py-0.5 text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 rounded">
+            DRDO MALE UAV DT
           </span>
         </div>
 
         {/* Zone 2: Primary View Navigation */}
-        <nav className="flex items-center gap-1 bg-[#07090E] p-1 rounded-lg border border-slate-800">
+        <nav className="flex items-center gap-1 bg-[#07090E] p-1 rounded-lg border border-slate-800 overflow-x-auto">
           <NavTab
             active={activeTab === '3d'}
             onClick={() => setActiveTab('3d')}
@@ -171,13 +176,13 @@ export default function App() {
             active={activeTab === '2d'}
             onClick={() => setActiveTab('2d')}
             icon={<Cpu className="w-4 h-4" />}
-            label="2D Animated Cross-Section"
+            label="2D Cross-Section"
           />
           <NavTab
             active={activeTab === 'overview'}
             onClick={() => setActiveTab('overview')}
             icon={<LayoutDashboard className="w-4 h-4" />}
-            label="Telemetry & Mission Control"
+            label="Telemetry & Mission"
           />
           <NavTab
             active={activeTab === 'diagnostics'}
@@ -185,11 +190,17 @@ export default function App() {
             icon={<FileText className="w-4 h-4" />}
             label="AI Diagnostics & RUL"
           />
+          <NavTab
+            active={activeTab === 'replay_arch'}
+            onClick={() => setActiveTab('replay_arch')}
+            icon={<History className="w-4 h-4" />}
+            label="Replay, CAN & Arch"
+          />
         </nav>
 
-        {/* Zone 3: Quick Fault Injection & Health Readout */}
+        {/* Zone 3: Complete 8-Fault DRDO Injection & Health Readout */}
         <div className="flex items-center gap-2">
-          <div className="hidden xl:flex items-center gap-3 mr-2 text-xs font-mono text-slate-400">
+          <div className="hidden xl:flex items-center gap-2.5 mr-1 text-xs font-mono text-slate-400">
             <span>
               HEALTH:{' '}
               <strong
@@ -214,24 +225,30 @@ export default function App() {
             </span>
           </div>
 
-          <button
-            onClick={() => injectFault('injector_degradation', 0.6)}
-            className="px-2.5 py-1 text-xs font-medium bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 rounded border border-rose-800/70 transition-colors whitespace-nowrap"
+          <select
+            aria-label="Inject DRDO Propulsion Fault"
+            defaultValue=""
+            onChange={(e) => {
+              if (e.target.value) {
+                injectFault(e.target.value, 0.75);
+                e.target.value = '';
+              }
+            }}
+            className="bg-rose-950/50 hover:bg-rose-900/60 text-rose-200 text-xs font-mono rounded border border-rose-800/70 px-2.5 py-1 outline-none cursor-pointer"
           >
-            Injector Fault
-          </button>
-          <button
-            onClick={() => injectFault('misfire', 0.8)}
-            className="px-2.5 py-1 text-xs font-medium bg-orange-950/50 hover:bg-orange-900/60 text-orange-300 rounded border border-orange-800/70 transition-colors whitespace-nowrap"
-          >
-            Misfire
-          </button>
-          <button
-            onClick={() => injectFault('lubrication_failure', 0.5)}
-            className="px-2.5 py-1 text-xs font-medium bg-amber-950/50 hover:bg-amber-900/60 text-amber-300 rounded border border-amber-800/70 transition-colors whitespace-nowrap"
-          >
-            Oil Leak
-          </button>
+            <option value="" disabled>
+              + Inject 8 DRDO Faults...
+            </option>
+            <option value="misfire">F01: Misfire Condition (Cyl #3)</option>
+            <option value="injector_degradation">F02: Injector Clog / Lean</option>
+            <option value="cooling_failure">F03: Cooling Degradation</option>
+            <option value="lubrication_failure">F04: Lubrication / Oil Leak</option>
+            <option value="sensor_drift">F05: EGT Sensor Drift (Kalman)</option>
+            <option value="combustion_instability">F06: Combustion Knock</option>
+            <option value="overheating">F07: Overheating Trend</option>
+            <option value="abnormal_vibration">F08: Abnormal PSRU Vibration</option>
+          </select>
+
           <button
             onClick={() => clearFaults()}
             className="px-2.5 py-1 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-700 transition-colors flex items-center gap-1 whitespace-nowrap"
@@ -267,6 +284,13 @@ export default function App() {
         )}
         {activeTab === 'diagnostics' && (
           <Diagnostics telemetry={telemetry} dtState={dtState} />
+        )}
+        {activeTab === 'replay_arch' && (
+          <MissionReplayAndArchitecture
+            telemetry={telemetry}
+            dtState={dtState}
+            liveHistory={history}
+          />
         )}
       </main>
     </div>
@@ -495,7 +519,7 @@ function OverviewView({
           </div>
 
           {/* Live Environmental & Operating Envelope Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-3 border-t border-slate-800/80 text-xs font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-6 gap-2.5 pt-3 border-t border-slate-800/80 text-xs font-mono">
             <div className="bg-slate-950/70 border border-slate-800/80 rounded px-3 py-2 flex items-center justify-between">
               <span className="text-slate-500">ALTITUDE</span>
               <span className="text-cyan-400 font-semibold tabular-nums">
@@ -503,7 +527,7 @@ function OverviewView({
               </span>
             </div>
             <div className="bg-slate-950/70 border border-slate-800/80 rounded px-3 py-2 flex items-center justify-between">
-              <span className="text-slate-500">AMBIENT TEMP</span>
+              <span className="text-slate-500">AMBIENT</span>
               <span
                 className={clsx(
                   'font-semibold tabular-nums',
@@ -525,6 +549,12 @@ function OverviewView({
               </span>
             </div>
             <div className="bg-slate-950/70 border border-slate-800/80 rounded px-3 py-2 flex items-center justify-between">
+              <span className="text-slate-500">INJ TIMING</span>
+              <span className="text-cyan-300 font-semibold tabular-nums">
+                {(telemetry.injection_timing_deg || 15.1).toFixed(1)}° BTDC
+              </span>
+            </div>
+            <div className="bg-slate-950/70 border border-slate-800/80 rounded px-3 py-2 flex items-center justify-between">
               <span className="text-slate-500">OIL TEMP</span>
               <span
                 className={clsx(
@@ -536,7 +566,7 @@ function OverviewView({
               </span>
             </div>
             <div className="bg-slate-950/70 border border-slate-800/80 rounded px-3 py-2 flex items-center justify-between">
-              <span className="text-slate-500">BUS VOLTAGE</span>
+              <span className="text-slate-500">BUS VOLT</span>
               <span className="text-emerald-400 font-semibold tabular-nums">
                 {telemetry.battery_voltage.toFixed(2)} V
               </span>
