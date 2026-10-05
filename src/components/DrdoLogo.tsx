@@ -6,7 +6,7 @@ export function DrdoLogo({
   showText = true,
   className,
 }: {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
   className?: string;
 }) {
@@ -15,6 +15,8 @@ export function DrdoLogo({
       ? 'w-8 h-8'
       : size === 'lg'
       ? 'w-12 h-12'
+      : size === 'xl'
+      ? 'w-28 h-28'
       : 'w-10 h-10';
 
   return (

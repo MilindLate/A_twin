@@ -27,6 +27,7 @@ import { Engine2D } from './components/Engine2D';
 import { Diagnostics } from './components/Diagnostics';
 import { MissionReplayAndArchitecture } from './components/MissionReplayAndArchitecture';
 import { DrdoLogo } from './components/DrdoLogo';
+import { DrdoLoader } from './components/DrdoLoader';
 
 const socket = io();
 
@@ -80,6 +81,23 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<
     '3d' | 'engine_core' | '2d' | 'overview' | 'diagnostics' | 'replay_arch'
   >('3d');
+  const [bootProgress, setBootProgress] = useState<number>(0);
+  const [isBooting, setIsBooting] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!isBooting) return;
+    const interval = setInterval(() => {
+      setBootProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setIsBooting(false), 180);
+          return 100;
+        }
+        return Math.min(100, prev + 4.5);
+      });
+    }, 80);
+    return () => clearInterval(interval);
+  }, [isBooting]);
 
   useEffect(() => {
     let lastUpdate = 0;
@@ -132,19 +150,24 @@ export default function App() {
     });
   };
 
-  if (!telemetry || !dtState) {
+  if (!telemetry || !dtState || isBooting) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#07090E] text-slate-300">
-        <div className="flex flex-col items-center gap-4">
-          <DrdoLogo size="lg" showText={true} />
-          <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 animate-pulse text-emerald-400" />
-            <p className="text-sm font-mono tracking-wider uppercase text-slate-400">
-              Synchronizing DRDO Propulsion Digital Twin...
-            </p>
-          </div>
-        </div>
-      </div>
+      <DrdoLoader
+        progress={
+          !telemetry || !dtState
+            ? Math.min(88, bootProgress)
+            : bootProgress
+        }
+        telemetryReady={Boolean(telemetry && dtState)}
+        onSkip={
+          telemetry && dtState
+            ? () => {
+                setBootProgress(100);
+                setIsBooting(false);
+              }
+            : undefined
+        }
+      />
     );
   }
 
@@ -152,10 +175,17 @@ export default function App() {
     <div className="h-screen bg-[#07090E] text-slate-200 font-sans flex flex-col overflow-hidden">
       {/* PROFESSIONAL 3-ZONE TOP COMMAND HEADER */}
       <header className="flex items-center justify-between bg-[#0B0F17] px-4 py-2 border-b border-slate-800/90 shrink-0 gap-2">
-        {/* Zone 1: Official DRDO Emblem & Name Only DRDO */}
-        <div className="flex items-center gap-2.5">
+        {/* Zone 1: Official DRDO Emblem & Name Only DRDO (Click to Re-Run System Sync) */}
+        <button
+          onClick={() => {
+            setBootProgress(0);
+            setIsBooting(true);
+          }}
+          title="Click to run DRDO Digital Twin System Initialization Check"
+          className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
+        >
           <DrdoLogo size="md" showText={true} />
-        </div>
+        </button>
 
         {/* Zone 2: Primary View Navigation */}
         <nav className="flex items-center gap-1 bg-[#07090E] p-1 rounded-lg border border-slate-800 overflow-x-auto">
